@@ -1,0 +1,6 @@
+__pycache__/
+backups/
+switcher_settings.json
+build/
+*.spec
+*.exe
