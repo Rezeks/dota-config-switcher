@@ -381,6 +381,7 @@ class App(ctk.CTk):
         top.pack(fill="x", padx=26, pady=(22, 0))
         ctk.CTkLabel(top, text="Перенос настроек Dota 2", font=(FONT, 26, "bold"), text_color=FG).pack(side="left")
         self._btn(top, "Папка Steam…", self.pick_steam, width=130).pack(side="right")
+        self._btn(top, "☁  Steam Cloud", self.cloud_help, width=130).pack(side="right", padx=(0, 8))
         self._btn(top, "⟳  Обновить", self.refresh, width=120).pack(side="right", padx=8)
         self.path_lbl = ctk.CTkLabel(self, text="", font=(FONT, 12), text_color=MUTED, anchor="w")
         self.path_lbl.pack(fill="x", padx=28, pady=(2, 8))
@@ -545,6 +546,31 @@ class App(ctk.CTk):
             msg += f"\n\nРезервная копия:\n{backup}"
         info(self, "Готово", msg)
         self.refresh()
+
+    def cloud_help(self):
+        text = ("Steam Cloud может перезаписать перенесённые настройки.\n\n"
+                "Чтобы отключить его для Dota 2:\n"
+                "1. Нажмите «Открыть свойства Dota 2» (Steam должен быть запущен).\n"
+                "2. Вкладка «Общие» → снимите галочку «Сохранять игровые данные в облаке Steam».\n"
+                "3. Сделайте перенос, затем при желании включите обратно.\n\n"
+                "Либо просто закройте Steam на время переноса.")
+        while True:
+            r = Dialog(self, "Steam Cloud", text, [
+                ("Открыть свойства Dota 2", "props", True),
+                ("Закрыть Steam", "exit", False),
+                ("Закрыть окно", None, False)]).ask()
+            if r == "props":
+                try:
+                    os.startfile("steam://gameproperties/570")
+                except OSError:
+                    info(self, "Ошибка", "Не удалось открыть Steam. Запущен ли он?")
+            elif r == "exit":
+                try:
+                    os.startfile("steam://exit")
+                except OSError:
+                    info(self, "Ошибка", "Не удалось закрыть Steam.")
+            else:
+                return
 
     def export_selected(self):
         a = self.acc_by_id(self.src)
